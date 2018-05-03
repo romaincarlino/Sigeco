@@ -5,18 +5,16 @@ import Colors from "../constants/Colors";
 
 class NavBar extends Component {
 
-    back() {
-        this.props.nav.navigate(this.props.backTitlePage);
-    }
-
     render() {
         return (
             <View style={styles.background}>
-                <TouchableHighlight style={styles.backarrowTouchable} onPress={() => this.back()}>
+                <TouchableHighlight style={styles.backarrowTouchable}
+                    onPress={() =>this.props.backFunction(this.props.context)}>
                     <Image style={styles.backarrow} source={Images.back}/>
                 </TouchableHighlight>
                 <Text style={styles.title}>{this.props.title}</Text>
-                <TouchableHighlight style={styles.rightTouchable} onPress={this.props.imageFunction}>
+                <TouchableHighlight style={styles.rightTouchable}
+                    onPress={() => this.props.imageFunction(this.props.context)}>
                     <Image source={this.props.image} style={styles.right}/>
                 </TouchableHighlight>
             </View>

@@ -16,12 +16,17 @@ class TestPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: true,
+            tests: null,
+            contenu_tests: null,
             points_cle: null,
+            points_cle_test: null,
+
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
+
+        //Take only point_cle associate with the test
         var points_cle_test = [];
 
         for (var i = 0; i < this.params.points_cle.length; i++) {
@@ -32,8 +37,10 @@ class TestPage extends Component {
         }
 
         this.setState({
-            isLoading:false,
-            points_cle: points_cle_test
+            tests: this.params.tests,
+            contenu_tests: this.params.contenu_tests,
+            points_cle: this.params.points_cle,
+            points_cle_test: points_cle_test
         })
     }
 
@@ -45,30 +52,28 @@ class TestPage extends Component {
         );
     }
 
-    validateTest() {
-        this.props.validateTest(this.params.id_test);
-        this.props.navigation.navigate("TestsList");
+    back(context) {
+        context.props.navigation.navigate("TestsList", {
+            points_cle: context.state.points_cle,
+            tests: context.state.tests,
+            contenu_tests: context.state.contenu_tests,
+        });
     }
 
+    validateTest(context) {
+        //context.props.navigation.navigate("TestsList");
+        alert("fct pas encore implementee");
+    }
 
     render() {
-
-        if (this.state.isLoading) {
-            return (
-                <View style={{flex: 1, padding: 20}}>
-                    <ActivityIndicator/>
-                </View>
-            )
-        }
-
         return (
             <View>
                 <NavBar
                     title={this.params.title}
-                    imageFunction={null}
-                    image={Images.done}
-                    nav={this.props.navigation}
-                    backTitlePage={'TestsList'}/>
+                    imageFunction={this.validateTest}
+                    image={Images.doneWhite}
+                    context={this}
+                    backFunction={this.back}/>
                 <ScrollView>
                     <View style={styles.titleView}>
                         <Text style={styles.point}>Point</Text>
@@ -76,7 +81,7 @@ class TestPage extends Component {
                         <Text style={styles.validate}>Atteint</Text>
                     </View>
                     <FlatList
-                        data={this.state.points_cle}
+                        data={this.state.points_cle_test}
                         renderItem={({item}) => this.renderItem(item)}
                         keyExtractor={item => item.id_point_cle}
                     />

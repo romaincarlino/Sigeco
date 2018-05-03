@@ -13,7 +13,6 @@ class ListItem_TestPage extends Component {
             data_source: [
                 {label: 'Oui', value: 1},
                 {label: 'Non', value: 0},
-                //tttt
             ]
         }
 

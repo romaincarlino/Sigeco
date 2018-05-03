@@ -8,10 +8,9 @@ import { StackNavigator } from 'react-navigation';
 
 export default MyProject = StackNavigator(
     {
-
+        Login: {screen: Login, headerMode: 'screen'},
         TestsList: {screen: TestsList},
         TestPage: {screen: TestPage},
-        Login: {screen: Login, headerMode: 'screen'},
     },
     {headerMode: 'screen'},
     );

@@ -12,13 +12,16 @@ class Login extends Component {
         this.state = {
             login: '',
             password: '',
-            isLoading: false,
+            isLoading: 3,
+            tests: null,
+            contenu_tests: null,
+            points_cle: null,
         };
     }
 
     tryLogin() {
         this.setState({
-            isLoading: true,
+            isLoading: 0,
         });
 
         fetch('https://app.sigeco.fr', {
@@ -37,20 +40,139 @@ class Login extends Component {
                 //if {message : error}
                 if (responseText.charAt(0) == '{') {
                     this.setState({
-                        isLoading: false,
+                        isLoading: 3,
                     });
                     ToastAndroid.show('Les identifiants ne sont pas corrects', ToastAndroid.SHORT);
                 }
                 else {
-                    this.setState({
-                        isLoading: false,
-                    });
-                    this.props.navigation.navigate('TestsList', {refresh: this.refreshFunction.bind(this)});
+                    this.getTests();
+                    this.getContenuTests();
+                    this.getPointCles();
+
+                    this.goToTests();
+
                 }
             })
             .catch((error) => {
                 console.error(error);
             })
+    }
+
+    //get tests (tab_mobile = 1)
+    getTests() {
+        fetch('https://app.sigeco.fr', {
+            method: 'POST',
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            body:
+            "forms[id_client_identification]=" + this.state.login + "&" +
+            "forms[pass_identification]=" + this.state.password + "&" +
+            "robot=1972&" +
+            "tab_mobile=1",
+        })
+            .then((response) => response.text())
+            .then((responseText) => {
+                //if {message : error}
+                if (responseText.charAt(0) == '{') {
+                    this.getTests();
+                }
+                else {
+                    responseText = responseText.substring(1);
+                    json = JSON.parse(responseText);
+                    this.setState({
+                        isLoading: this.state.isLoading + 1,
+                        tests: json.tests
+                    })
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+    }
+
+    //get contenu_tests (tab_mobile = 2)
+    getContenuTests() {
+        fetch('https://app.sigeco.fr', {
+            method: 'POST',
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            body:
+            "forms[id_client_identification]=" + this.state.login + "&" +
+            "forms[pass_identification]=" + this.state.password + "&" +
+            "robot=1972&" +
+            "tab_mobile=2",
+        })
+            .then((response) => response.text())
+            .then((responseText) => {
+                //if {message : error}
+                if (responseText.charAt(0) == '{') {
+                    this.getContenuTests();
+                }
+                else {
+                    responseText = responseText.substring(1);
+                    json = JSON.parse(responseText);
+                    this.setState({
+                        isLoading: this.state.isLoading + 1,
+                        contenu_tests: json.contenu_tests,
+                    })
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+    }
+
+    //get tests (tab_mobile = 1)
+    getPointCles() {
+        fetch('https://app.sigeco.fr', {
+            method: 'POST',
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            body:
+            "forms[id_client_identification]=" + this.state.login + "&" +
+            "forms[pass_identification]=" + this.state.password + "&" +
+            "robot=1972&" +
+            "tab_mobile=3",
+        })
+            .then((response) => response.text())
+            .then((responseText) => {
+                //if {message : error}
+                if (responseText.charAt(0) == '{') {
+                    this.getPointCles();
+                }
+                else {
+                    responseText = responseText.substring(1);
+                    json = JSON.parse(responseText);
+
+                    this.setState({
+                        isLoading: this.state.isLoading + 1,
+                        points_cle: json.points_cle
+                    })
+
+
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+    }
+
+    goToTests() {
+        if(this.state.isLoading<3) {
+            console.log(this.state.isLoading);
+            window.setTimeout(() => this.goToTests(), 100);
+        } else {
+            this.props.navigation.navigate('TestsList', {
+                    refresh: this.refreshFunction.bind(this),
+                    tests: this.state.tests,
+                    contenu_tests: this.state.contenu_tests,
+                    points_cle: this.state.points_cle,
+                }
+            );
+        }
     }
 
     refreshFunction() {
@@ -63,7 +185,7 @@ class Login extends Component {
 
     render() {
 
-        if (this.state.isLoading) {
+        if (this.state.isLoading < 3) {
             return (
                 <View style={{flex: 1, padding: 20}}>
                     <ActivityIndicator/>

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {Text, View} from 'react-native';
+import {Image, Text, View} from 'react-native';
 import Colors from '../constants/Colors';
+import Images from '../constants/Images';
 
 class ListItem_TestsList extends Component {
 
@@ -13,6 +14,9 @@ class ListItem_TestsList extends Component {
             <View style={styles.item}>
                 <View style={styles.titleView}>
                     <Text style={styles.userName}>{this.props.item.Nom_prenom}</Text>
+                    {this.props.item.fait == 1 ?
+                        <Image source={Images.doneBlack} style={styles.done}/> : null
+                    }
                     <Text style={styles.name}>{this.props.item.Titre_du_test}</Text>
                 </View>
                 <View style={styles.contentView}>
@@ -45,6 +49,7 @@ const styles = {
         borderBottomWidth: 1,
         padding: 10,
         flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'space-between',
     },
     userName: {
@@ -55,6 +60,10 @@ const styles = {
     name: {
         fontSize: 18,
         color: Colors.black,
+    },
+    done:{
+      height:25,
+      width:25,
     },
     contentView: {
         display: 'flex',
