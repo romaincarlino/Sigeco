@@ -9,7 +9,7 @@ class NavBar extends Component {
         return (
             <View style={styles.background}>
                 <TouchableHighlight style={styles.backarrowTouchable}
-                    onPress={() =>this.props.backFunction(this.props.context)}>
+                    onPress={() => this.props.backFunction(this.props.context)}>
                     <Image style={styles.backarrow} source={Images.back}/>
                 </TouchableHighlight>
                 <Text style={styles.title}>{this.props.title}</Text>
@@ -26,32 +26,35 @@ const styles = {
     background: {
         flexDirection: 'row',
         backgroundColor: Colors.blue,
-        justifyContent: 'space-between',
         alignItems:'center',
         height: 50,
     },
     backarrowTouchable: {
         width: 30,
         height: 30,
-        margin:10,
+        position:'absolute',
+        left:10,
     },
     backarrow: {
         width: 30,
         height: 30,
     },
     title: {
+        marginRight: 50,
+        marginLeft: 50,
         fontSize: 20,
         color: 'white',
         fontWeight: 'bold'
     },
     rightTouchable: {
-        width: 50,
-        height: 50,
-        margin:10,
+        position:'absolute',
+        right:10,
+        width: 40,
+        height: 40,
     },
     right: {
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
     }
 };
 

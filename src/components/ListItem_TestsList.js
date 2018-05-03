@@ -5,11 +5,12 @@ import Images from '../constants/Images';
 
 class ListItem_TestsList extends Component {
 
-    contexte = this.props.contenu_test.contexte.replace(/<br>/g, "\n");
-    fourniture = this.props.contenu_test.fourniture.replace(/<br>/g, "\n");
-    demande = this.props.contenu_test.demande.replace(/<br>/g, "\n");
-
     render() {
+
+        contexte = this.props.contenu_test.contexte.replace(/<br>/g, "\n");
+        fourniture = this.props.contenu_test.fourniture.replace(/<br>/g, "\n");
+        demande = this.props.contenu_test.demande.replace(/<br>/g, "\n");
+
         return (
             <View style={styles.item}>
                 <View style={styles.titleView}>
@@ -22,15 +23,15 @@ class ListItem_TestsList extends Component {
                 <View style={styles.contentView}>
                     <View style={styles.column}>
                         <Text style={styles.title}>Contexte</Text>
-                        <Text style={styles.content}>{this.contexte}</Text>
+                        <Text style={styles.content}>{contexte}</Text>
                     </View>
                     <View style={styles.column}>
                         <Text style={styles.title}>Fournitures</Text>
-                        <Text style={styles.content}>{this.fourniture}</Text>
+                        <Text style={styles.content}>{fourniture}</Text>
                     </View>
                     <View style={styles.column}>
                         <Text style={styles.title}>Demande</Text>
-                        <Text style={styles.content}>{this.demande}</Text>
+                        <Text style={styles.content}>{demande}</Text>
                     </View>
                 </View>
             </View>

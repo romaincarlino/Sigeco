@@ -1,15 +1,12 @@
 import React, {Component} from 'react';
-import {ActivityIndicator, FlatList, View, Text, TouchableHighlight} from 'react-native';
+import {Alert, ActivityIndicator, FlatList, View, Text, TouchableHighlight} from 'react-native';
 import ListItem_TestsList from '../components/ListItem_TestsList';
-import Colors from '../constants/Colors';
 import Images from '../constants/Images';
 import NavBar from '../components/NavBar';
 
 class TestsList extends Component {
 
-    static navigationOptions = {
-        header: null,
-    };
+    static navigationOptions = {header: null};
 
     params = this.props.navigation.state.params;
 
@@ -19,7 +16,6 @@ class TestsList extends Component {
             tests: null,
             contenu_tests: null,
             points_cle: null,
-
         }
     }
 
@@ -35,46 +31,44 @@ class TestsList extends Component {
         for (var i = 0; i < this.state.contenu_tests.length; i++) {
             var ct = this.state.contenu_tests[i];
             if (ct.id_test == item.id_test) {
-                if (item.fait == '1') {
-                    return (
+                return (
+                    <TouchableHighlight onPress={() => this.onItemClick(item)}>
                         <ListItem_TestsList
                             item={item}
                             contenu_test={ct}
                             validateTest={this.validateTest}
                         />
-                    );
-                } else {
-                    return (
-                        <TouchableHighlight onPress={() => this.onItemClick(item)}>
-                            <ListItem_TestsList
-                                item={item}
-                                contenu_test={ct}
-                                validateTest={this.validateTest}
-                            />
-                        </TouchableHighlight>
-                    );
-                }
+                    </TouchableHighlight>
+                );
+
             }
         }
     }
 
     onItemClick(item) {
+        //go to TestPage
         this.props.navigation.navigate('TestPage', {
             id_test: item.id_test,
             title: item.Nom_prenom + " - " + item.Titre_du_test,
             points_cle: this.state.points_cle,
             tests: this.state.tests,
             contenu_tests: this.state.contenu_tests,
-
-        });
+        })
     }
 
     sendDatas() {
         alert('Fonction pas encore implementee');
     }
 
-    back(context){
-        context.props.navigation.navigate("Login");
+    back(context) {
+        Alert.alert(
+            'Déconnexion',
+            'Voulez vous vraiment vous déconnecter? Toute sauvegarde non synchronisée sera perdue ',
+            [
+                {text: 'Oui', onPress: () => context.props.navigation.navigate("Login")},
+                {text: 'Non'},
+            ],
+        );
     }
 
     render() {
@@ -92,13 +86,13 @@ class TestsList extends Component {
                     renderItem={({item}) => this.renderItem(item)}
                     keyExtractor={item => item.id}
                 />
-
             </View>
         );
     }
 }
 
-const styles = {};
+const
+    styles = {};
 
 export default TestsList;
 

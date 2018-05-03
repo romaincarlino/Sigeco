@@ -1,5 +1,15 @@
 import React, {Component} from 'react';
-import {ScrollView, ActivityIndicator, TouchableHighlight, FlatList, TextInput, Text, View, Button} from 'react-native';
+import {
+    Alert,
+    ScrollView,
+    ActivityIndicator,
+    TouchableHighlight,
+    FlatList,
+    TextInput,
+    Text,
+    View,
+    Button
+} from 'react-native';
 import Colors from '../constants/Colors';
 import Images from '../constants/Images';
 import ListItem_TestPage from '../components/ListItem_TestPage';
@@ -25,8 +35,7 @@ class TestPage extends Component {
     }
 
     componentDidMount() {
-
-        //Take only point_cle associate with the test
+        //Separate point_cle associated with the test
         var points_cle_test = [];
 
         for (var i = 0; i < this.params.points_cle.length; i++) {
@@ -52,7 +61,7 @@ class TestPage extends Component {
         );
     }
 
-    back(context) {
+    backToTestsList(context) {
         context.props.navigation.navigate("TestsList", {
             points_cle: context.state.points_cle,
             tests: context.state.tests,
@@ -60,9 +69,23 @@ class TestPage extends Component {
         });
     }
 
+
     validateTest(context) {
-        //context.props.navigation.navigate("TestsList");
-        alert("fct pas encore implementee");
+        //get the position of the test
+        position = null;
+
+        for (var i = 0; i < context.state.tests.length; i++) {
+            var test = context.state.tests[i];
+            if (test.id_test == context.params.id_test) {
+                position = i;
+            }
+        }
+
+        //changer le "fait"
+        context.state.tests[position].fait = 1;
+
+        //changer de page et envoyer donnees modifiees
+        context.backToTestsList(context);
     }
 
     render() {
@@ -73,7 +96,7 @@ class TestPage extends Component {
                     imageFunction={this.validateTest}
                     image={Images.doneWhite}
                     context={this}
-                    backFunction={this.back}/>
+                    backFunction={this.backToTestsList}/>
                 <ScrollView>
                     <View style={styles.titleView}>
                         <Text style={styles.point}>Point</Text>
@@ -132,6 +155,7 @@ const styles = {
         backgroundColor: 'white',
         height: 100,
         marginBottom: 100,
+        textAlignVertical: 'top',
     }
 
 

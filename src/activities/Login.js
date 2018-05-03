@@ -1,5 +1,14 @@
 import React, {Component} from 'react';
-import {ToastAndroid,ActivityIndicator, Text, View, TextInput, TouchableOpacity, Image} from 'react-native';
+import {
+    ToastAndroid,
+    ActivityIndicator,
+    ScrollView,
+    Text,
+    View,
+    TextInput,
+    TouchableOpacity,
+    Image
+} from 'react-native';
 import Colors from '../constants/Colors';
 import Images from '../constants/Images';
 
@@ -20,10 +29,6 @@ class Login extends Component {
     }
 
     tryLogin() {
-        this.setState({
-            isLoading: 0,
-        });
-
         fetch('https://app.sigeco.fr', {
             method: 'POST',
             headers: new Headers({
@@ -37,25 +42,38 @@ class Login extends Component {
         })
             .then((response) => response.text())
             .then((responseText) => {
-                //if {message : error}
+                //if {message : error} ou fail
                 if (responseText.charAt(0) == '{') {
+                    //message = error
+                    ToastAndroid.show('Identifiant ou mot de passe incorrect', ToastAndroid.SHORT);
                     this.setState({
-                        isLoading: 3,
-                    });
-                    ToastAndroid.show('Les identifiants ne sont pas corrects', ToastAndroid.SHORT);
+                        password: '',
+                    })
                 }
                 else {
-                    this.getTests();
-                    this.getContenuTests();
-                    this.getPointCles();
-
-                    this.goToTests();
+                    message = JSON.parse(responseText.substring(1)).message;
+                    if (message == 'fail') {
+                        ToastAndroid.show('Pas de tests à charger', ToastAndroid.SHORT);
+                    } else {
+                        this.loadDatas();
+                        this.goToTests();
+                    }
 
                 }
             })
             .catch((error) => {
                 console.error(error);
             })
+    }
+
+    loadDatas() {
+        this.setState({
+            isLoading: 0
+        });
+
+        this.getTests();
+        this.getContenuTests();
+        this.getPointCles();
     }
 
     //get tests (tab_mobile = 1)
@@ -112,7 +130,9 @@ class Login extends Component {
                 }
                 else {
                     responseText = responseText.substring(1);
+                    console.log(responseText);
                     json = JSON.parse(responseText);
+
                     this.setState({
                         isLoading: this.state.isLoading + 1,
                         contenu_tests: json.contenu_tests,
@@ -161,12 +181,10 @@ class Login extends Component {
     }
 
     goToTests() {
-        if(this.state.isLoading<3) {
-            console.log(this.state.isLoading);
-            window.setTimeout(() => this.goToTests(), 100);
+        if (this.state.isLoading < 3) {
+            window.setTimeout(() => this.goToTests(), 10);
         } else {
             this.props.navigation.navigate('TestsList', {
-                    refresh: this.refreshFunction.bind(this),
                     tests: this.state.tests,
                     contenu_tests: this.state.contenu_tests,
                     points_cle: this.state.points_cle,
@@ -175,26 +193,19 @@ class Login extends Component {
         }
     }
 
-    refreshFunction() {
-        this.setState({
-            login: '',
-            password: '',
-            isLoading: false,
-        })
-    }
-
     render() {
-
-        if (this.state.isLoading < 3) {
+        //LoadDatas
+        /*if (this.state.isLoading < 3) {
             return (
                 <View style={{flex: 1, padding: 20}}>
+                    <Text>Chargement en cours</Text>
                     <ActivityIndicator/>
                 </View>
             )
-        }
+        }*/
 
         return (
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
                 <Image
                     source={Images.logo}
                     style={styles.logo}
@@ -205,6 +216,7 @@ class Login extends Component {
                     placeholder="Login"
                     placeholderTextColor={Colors.gray}
                     onChangeText={(login) => this.setState({login})}>
+                    {this.state.login}
                 </TextInput>
                 <TextInput
                     style={styles.input}
@@ -213,11 +225,19 @@ class Login extends Component {
                     placeholderTextColor={Colors.gray}
                     secureTextEntry
                     onChangeText={(password) => this.setState({password})}>
+                    {this.state.password}
                 </TextInput>
                 <TouchableOpacity style={styles.loginButtonContainer} onPress={this.tryLogin.bind(this)}>
                     <Text style={styles.loginButtonText}>Se connecter</Text>
                 </TouchableOpacity>
-            </View>
+                {this.state.isLoading < 3 ?
+                    <View style={styles.isLoadingContainer}>
+                        <Text style={styles.isLoadingText}> Chargement en cours</Text>
+                        <ActivityIndicator color={'white'}/>
+                    </View>
+                    : null
+                }
+            </ScrollView>
         );
     }
 }
@@ -225,14 +245,14 @@ class Login extends Component {
 const styles = {
     container: {
         backgroundColor: Colors.darkgray,
-        flex:1,
+        flex: 1,
     },
-    logo:{
+    logo: {
         width: 100,
         height: 100,
-        marginTop:100,
+        marginTop: 100,
         marginBottom: 70,
-        alignSelf:'center'
+        alignSelf: 'center'
     },
     input: {
         borderRadius: 5,
@@ -257,8 +277,16 @@ const styles = {
         textAlign: 'center',
         color: 'white',
         fontSize: 20
-    }
-
+    },
+    isLoadingContainer: {
+        justifyContent:'center',
+        alignItems:'center',
+        marginTop:20,
+    },
+    isLoadingText: {
+        color:'white',
+        marginBottom: 10,
+    },
 }
 
 export default Login;
