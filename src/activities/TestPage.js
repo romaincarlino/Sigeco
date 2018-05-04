@@ -26,6 +26,7 @@ class TestPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            commentaire: null,
             tests: null,
             contenu_tests: null,
             points_cle: null,
@@ -40,12 +41,20 @@ class TestPage extends Component {
 
         for (var i = 0; i < this.params.points_cle.length; i++) {
             var point_cle = this.params.points_cle[i];
-            if (point_cle.id_test == this.params.id_test) {
+            if (point_cle.id_test == this.params.item.id_test) {
                 points_cle_test.push(point_cle);
             }
         }
 
+        //get commentaire
+        //commentaire1 = this.params.commentaire !== undefined ? this.params.commentaire : '';
+
+        if (this.params.tests[this.params.positionInTests].commentaire == undefined) {
+            this.params.tests[this.params.positionInTests]['commentaire'] = '';
+        }
+
         this.setState({
+            commentaire: this.params.tests[this.params.positionInTests].commentaire,
             tests: this.params.tests,
             contenu_tests: this.params.contenu_tests,
             points_cle: this.params.points_cle,
@@ -62,6 +71,10 @@ class TestPage extends Component {
     }
 
     backToTestsList(context) {
+
+        //charger les nouvelles donnees
+        context.state.tests[context.params.positionInTests].commentaire = context.state.commentaire;
+
         context.props.navigation.navigate("TestsList", {
             points_cle: context.state.points_cle,
             tests: context.state.tests,
@@ -71,18 +84,8 @@ class TestPage extends Component {
 
 
     validateTest(context) {
-        //get the position of the test
-        position = null;
-
-        for (var i = 0; i < context.state.tests.length; i++) {
-            var test = context.state.tests[i];
-            if (test.id_test == context.params.id_test) {
-                position = i;
-            }
-        }
-
         //changer le "fait"
-        context.state.tests[position].fait = 1;
+        context.state.tests[context.params.positionInTests].fait = '1';
 
         //changer de page et envoyer donnees modifiees
         context.backToTestsList(context);
@@ -92,7 +95,7 @@ class TestPage extends Component {
         return (
             <View>
                 <NavBar
-                    title={this.params.title}
+                    title={this.params.item.Nom_prenom + " - " + this.params.item.Titre_du_test}
                     imageFunction={this.validateTest}
                     image={Images.doneWhite}
                     context={this}
@@ -113,7 +116,11 @@ class TestPage extends Component {
                         underlineColorAndroid='transparent'
                         multiline={true}
                         style={styles.input}
-                    />
+                        onChangeText={(commentaire) => {
+                            this.setState({commentaire})
+                        }}>
+                        {this.state.commentaire}
+                    </TextInput>
                 </ScrollView>
             </View>
         );
@@ -136,6 +143,7 @@ const styles = {
     },
     expectedResult: {
         flex: 6,
+        marginLeft: 10,
         color: Colors.black,
         fontWeight: 'bold'
     },

@@ -130,7 +130,6 @@ class Login extends Component {
                 }
                 else {
                     responseText = responseText.substring(1);
-                    console.log(responseText);
                     json = JSON.parse(responseText);
 
                     this.setState({
@@ -144,7 +143,7 @@ class Login extends Component {
             })
     }
 
-    //get tests (tab_mobile = 1)
+    //get point cles (tab_mobile = 3)
     getPointCles() {
         fetch('https://app.sigeco.fr', {
             method: 'POST',
@@ -194,18 +193,9 @@ class Login extends Component {
     }
 
     render() {
-        //LoadDatas
-        /*if (this.state.isLoading < 3) {
-            return (
-                <View style={{flex: 1, padding: 20}}>
-                    <Text>Chargement en cours</Text>
-                    <ActivityIndicator/>
-                </View>
-            )
-        }*/
 
         return (
-            <ScrollView style={styles.container}>
+            <ScrollView style={styles.container} keyboardShouldPersistTaps='handled'>
                 <Image
                     source={Images.logo}
                     style={styles.logo}

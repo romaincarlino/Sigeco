@@ -12,12 +12,9 @@ class ListItem_TestsList extends Component {
         demande = this.props.contenu_test.demande.replace(/<br>/g, "\n");
 
         return (
-            <View style={styles.item}>
+            <View style={this.props.item.fait == '1' ? styles.itemGreen : styles.itemNormal}>
                 <View style={styles.titleView}>
                     <Text style={styles.userName}>{this.props.item.Nom_prenom}</Text>
-                    {this.props.item.fait == 1 ?
-                        <Image source={Images.doneBlack} style={styles.done}/> : null
-                    }
                     <Text style={styles.name}>{this.props.item.Titre_du_test}</Text>
                 </View>
                 <View style={styles.contentView}>
@@ -40,7 +37,13 @@ class ListItem_TestsList extends Component {
 }
 
 const styles = {
-    item: {
+    itemGreen: {
+        marginBottom: 10,
+        borderBottomColor: Colors.gray,
+        borderBottomWidth: 1,
+        backgroundColor: 'green',
+    },
+    itemNormal: {
         marginBottom: 10,
         borderBottomColor: Colors.gray,
         borderBottomWidth: 1,

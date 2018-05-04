@@ -55,8 +55,6 @@ class ListItem_TestPage extends Component {
 
 const styles = {
     item: {
-        paddingLeft: 10,
-        paddingRight: 10,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
@@ -73,14 +71,13 @@ const styles = {
     },
     expectedResult: {
         flex: 6,
-        marginLeft: 5,
+        marginLeft: 10,
         color: Colors.black,
     },
     validate: {
         flex: 3,
     },
     radioForm:{
-        backgroundColor: 'white'
     }
 };
 

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Alert, ActivityIndicator, FlatList, View, Text, TouchableHighlight} from 'react-native';
+import {Alert, ActivityIndicator, FlatList, View, Text, TouchableOpacity} from 'react-native';
 import ListItem_TestsList from '../components/ListItem_TestsList';
 import Images from '../constants/Images';
 import NavBar from '../components/NavBar';
@@ -27,29 +27,52 @@ class TestsList extends Component {
         })
     }
 
-    renderItem(item) {
+    renderItem(item, index) {
         for (var i = 0; i < this.state.contenu_tests.length; i++) {
             var ct = this.state.contenu_tests[i];
             if (ct.id_test == item.id_test) {
                 return (
-                    <TouchableHighlight onPress={() => this.onItemClick(item)}>
+                    <TouchableOpacity onPress={() => this.onItemClick(item, index)}>
                         <ListItem_TestsList
                             item={item}
                             contenu_test={ct}
                             validateTest={this.validateTest}
                         />
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                 );
 
             }
         }
     }
 
-    onItemClick(item) {
+    onItemClick(item, positionInTests) {
+        if (item.fait == '1') {
+            Alert.alert(
+                'Ce test a été validé',
+                'Voulez-vous invalider et modifier ce test?',
+                [
+                    {text: 'Oui', onPress: () => {
+                            //changer le "fait"
+                            item.fait = '0';
+                            this.state.tests[positionInTests].fait = '0';
+
+                            this.goTotestPage(item, positionInTests);
+                        }
+                    },
+                    {text: 'Non'},
+                ],
+            );
+        } else {
+            this.goTotestPage(item, positionInTests);
+        }
+
+    }
+
+    goTotestPage(item, positionInTests) {
         //go to TestPage
         this.props.navigation.navigate('TestPage', {
-            id_test: item.id_test,
-            title: item.Nom_prenom + " - " + item.Titre_du_test,
+            positionInTests: positionInTests,
+            item: item,
             points_cle: this.state.points_cle,
             tests: this.state.tests,
             contenu_tests: this.state.contenu_tests,
@@ -83,7 +106,7 @@ class TestsList extends Component {
                 />
                 <FlatList
                     data={this.state.tests}
-                    renderItem={({item}) => this.renderItem(item)}
+                    renderItem={({item, index}) => this.renderItem(item, index)}
                     keyExtractor={item => item.id}
                 />
             </View>
@@ -91,8 +114,7 @@ class TestsList extends Component {
     }
 }
 
-const
-    styles = {};
+const styles = {};
 
 export default TestsList;
 
