@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Alert, FlatList, View, Text, TouchableOpacity, ToastAndroid} from 'react-native';
+import {BackHandler, Alert, FlatList, View, TouchableOpacity, ToastAndroid} from 'react-native';
 import ListItem_TestsList from '../components/ListItem_TestsList';
 import Images from '../constants/Images';
 import NavBar from '../components/NavBar';
@@ -29,7 +29,21 @@ class TestsList extends Component {
             login: this.params.login,
             password: this.params.password,
         })
+
+        //block hardware back button
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     }
+
+    componentWillUnmount() {
+        //block hardware back button
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+    }
+
+    //block hardware black button
+    handleBackButton() {
+        return true; //instead of default function for hardware back button
+    }
+
 
     renderItem(item, index) {
         for (var i = 0; i < this.state.contenu_tests.length; i++) {
@@ -85,7 +99,7 @@ class TestsList extends Component {
                                 tests: tests
                             });
 
-                            this.goTotestPage(item, positionInTests);
+                            this.goToTestPage(item, positionInTests);
                         }
                     },
 
@@ -93,12 +107,12 @@ class TestsList extends Component {
                 ],
             );
         } else {
-            this.goTotestPage(item, positionInTests);
+            this.goToTestPage(item, positionInTests);
         }
 
     }
 
-    goTotestPage(item, positionInTests) {
+    goToTestPage(item, positionInTests) {
         //go to TestPage
 
         this.props.navigation.navigate('TestPage', {
@@ -107,6 +121,8 @@ class TestsList extends Component {
             points_cle: this.state.points_cle,
             tests: this.state.tests,
             contenu_tests: this.state.contenu_tests,
+            login: this.state.login,
+            password: this.state.password
         })
     }
 
@@ -166,7 +182,6 @@ class TestsList extends Component {
                 //if {message : error} ou fail
                 if (responseText.charAt(0) == '{') {
                     ToastAndroid.show('Echec de la synchronisation', ToastAndroid.LONG);
-                    console.log(retour5);
                 }
                 else {
                     message = JSON.parse(responseText.substring(1)).message;
@@ -189,7 +204,6 @@ class TestsList extends Component {
                                 //if {message : error} ou fail
                                 if (responseText.charAt(0) == '{') {
                                     ToastAndroid.show('Echec de la synchronisation', ToastAndroid.LONG);
-                                    console.log('3');
                                 }
                                 else {
                                     message = JSON.parse(responseText.substring(1)).message;
@@ -210,18 +224,15 @@ class TestsList extends Component {
                                     }
                                     else {
                                         ToastAndroid.show('Echec de la synchronisation', ToastAndroid.LONG);
-                                        console.log('4');
                                     }
                                 }
                             })
                             .catch((error) => {
                                 console.error(error);
                             })
-
                     }
                     else {
                         ToastAndroid.show('Echec de la synchronisation', ToastAndroid.LONG);
-                        console.log('2');
                     }
                 }
             })

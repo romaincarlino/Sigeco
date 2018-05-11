@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {
+    BackHandler,
     ToastAndroid,
     ScrollView,
     FlatList,
@@ -29,7 +30,8 @@ class TestPage extends Component {
             contenu_tests: null,
             points_cle: null,
             points_cle_test: null,
-            //positionInPointsCle: null,
+            login: null,
+            password: null,
 
         }
     }
@@ -61,8 +63,22 @@ class TestPage extends Component {
             tests: this.params.tests,
             contenu_tests: this.params.contenu_tests,
             points_cle: this.params.points_cle,
-            points_cle_test: points_cle_test
+            points_cle_test: points_cle_test,
+            login: this.params.login,
+            password: this.params.password
         })
+        //block hardware back button
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    }
+
+    componentWillUnmount() {
+        //block hardware back button
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+    }
+
+    //block hardware black button
+    handleBackButton() {
+        return true; //instead of default function for hardware back button
     }
 
     renderItem(item, index) {
@@ -89,6 +105,8 @@ class TestPage extends Component {
             points_cle: context.state.points_cle,
             tests: context.state.tests,
             contenu_tests: context.state.contenu_tests,
+            login: context.state.login,
+            password: context.state.password
         });
     }
 
