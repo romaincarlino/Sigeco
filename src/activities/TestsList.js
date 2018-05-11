@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Alert, ActivityIndicator, FlatList, View, Text, TouchableOpacity} from 'react-native';
+import {Alert, FlatList, View, Text, TouchableOpacity, ToastAndroid} from 'react-native';
 import ListItem_TestsList from '../components/ListItem_TestsList';
 import Images from '../constants/Images';
 import NavBar from '../components/NavBar';
@@ -16,6 +16,8 @@ class TestsList extends Component {
             tests: null,
             contenu_tests: null,
             points_cle: null,
+            login: null,
+            password: null,
         }
     }
 
@@ -24,6 +26,8 @@ class TestsList extends Component {
             tests: this.params.tests,
             contenu_tests: this.params.contenu_tests,
             points_cle: this.params.points_cle,
+            login: this.params.login,
+            password: this.params.password,
         })
     }
 
@@ -51,15 +55,41 @@ class TestsList extends Component {
                 'Ce test a été validé',
                 'Voulez-vous invalider et modifier ce test?',
                 [
-                    {text: 'Oui', onPress: () => {
+                    {
+                        text: 'Effacer', onPress: () => {
+                            //changer le "fait" et le commentaire
+                            tests = this.state.tests;
+                            tests[positionInTests].fait = '0';
+                            tests[positionInTests].commentaire = '';
+                            this.setState({
+                                tests: tests
+                            });
+
+                            //on remet les points cle a zero
+                            for (i = 0; i < this.state.points_cle.length; i++) {
+                                point_cle = this.state.points_cle[i];
+                                if (point_cle.id_test == item.id_test) {
+                                    point_cle.value = null;
+                                }
+                            }
+
+
+                        }
+                    },
+                    {
+                        text: 'Modifier', onPress: () => {
                             //changer le "fait"
-                            item.fait = '0';
-                            this.state.tests[positionInTests].fait = '0';
+                            tests = this.state.tests;
+                            tests[positionInTests].fait = '0';
+                            this.setState({
+                                tests: tests
+                            });
 
                             this.goTotestPage(item, positionInTests);
                         }
                     },
-                    {text: 'Non'},
+
+                    {text: 'Annuler'},
                 ],
             );
         } else {
@@ -70,6 +100,7 @@ class TestsList extends Component {
 
     goTotestPage(item, positionInTests) {
         //go to TestPage
+
         this.props.navigation.navigate('TestPage', {
             positionInTests: positionInTests,
             item: item,
@@ -79,8 +110,124 @@ class TestsList extends Component {
         })
     }
 
-    sendDatas() {
-        alert('Fonction pas encore implementee');
+    sendDatas(context) {
+        tab5 = [];
+        tab4 = [];
+
+        //on cree les donnees a envoyer
+        for (var i = 0; i < context.state.tests.length; i++) {
+            test = context.state.tests[i];
+            if (test.fait == '1') {
+                //complete tab 5
+                tab5.push({
+                    id: test.id,
+                    token: test.token,
+                    commentaire: test.commentaire,
+                    fait: test.fait
+                })
+
+                // complete tab 4
+                for (var j = 0; j < context.state.points_cle.length; j++) {
+                    point_cle = context.state.points_cle[j];
+                    if (point_cle.id_test == test.id_test) {
+
+                        tab4.push({
+                            id: test.id,
+                            token: test.token,
+                            id_point_cle: point_cle.id_point_cle,
+                            score: point_cle.value
+                        })
+                    }
+                }
+            }
+        }
+
+        //mise en forme des donnees
+        retour4 = '{\"retour\":' + JSON.stringify(tab4) + '}';
+        retour5 = '{\"retour\":' + JSON.stringify(tab5) + '}';
+
+        //envoi des donness
+
+        //tab5
+        fetch('https://app.sigeco.fr?', {
+            method: 'POST',
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            body:
+            "forms[id_client_identification]=" + context.state.login + "&" +
+            "forms[pass_identification]=" + context.state.password + "&" +
+            "robot=1972&" +
+            "tab_mobile=5&" +
+            "retour=" + retour5,
+        })
+            .then((response) => response.text())
+            .then((responseText) => {
+                //if {message : error} ou fail
+                if (responseText.charAt(0) == '{') {
+                    ToastAndroid.show('Echec de la synchronisation', ToastAndroid.LONG);
+                    console.log(retour5);
+                }
+                else {
+                    message = JSON.parse(responseText.substring(1)).message;
+                    if (message == 'ok') {
+                        //tab 4
+                        fetch('https://app.sigeco.fr?', {
+                            method: 'POST',
+                            headers: new Headers({
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            }),
+                            body:
+                            "forms[id_client_identification]=" + context.state.login + "&" +
+                            "forms[pass_identification]=" + context.state.password + "&" +
+                            "robot=1972&" +
+                            "tab_mobile=4&" +
+                            "retour=" + retour4,
+                        })
+                            .then((response) => response.text())
+                            .then((responseText) => {
+                                //if {message : error} ou fail
+                                if (responseText.charAt(0) == '{') {
+                                    ToastAndroid.show('Echec de la synchronisation', ToastAndroid.LONG);
+                                    console.log('3');
+                                }
+                                else {
+                                    message = JSON.parse(responseText.substring(1)).message;
+                                    if (message == 'ok') {
+                                        ToastAndroid.show('Données synchronisées', ToastAndroid.LONG);
+
+                                        //on supprime les test validés
+                                        for (var i = 0; i < context.state.tests.length; i++) {
+                                            test = context.state.tests[i];
+                                            if (test.fait == '1') {
+                                                tests = context.state.tests;
+                                                tests.splice(i, 1);
+                                                context.setState({
+                                                    tests: tests
+                                                })
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        ToastAndroid.show('Echec de la synchronisation', ToastAndroid.LONG);
+                                        console.log('4');
+                                    }
+                                }
+                            })
+                            .catch((error) => {
+                                console.error(error);
+                            })
+
+                    }
+                    else {
+                        ToastAndroid.show('Echec de la synchronisation', ToastAndroid.LONG);
+                        console.log('2');
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            })
     }
 
     back(context) {
@@ -105,6 +252,7 @@ class TestsList extends Component {
                     backFunction={this.back}
                 />
                 <FlatList
+                    extraData={this.state}
                     data={this.state.tests}
                     renderItem={({item, index}) => this.renderItem(item, index)}
                     keyExtractor={item => item.id}

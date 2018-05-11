@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import {Image, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import Colors from '../constants/Colors';
-import Images from '../constants/Images';
 
 class ListItem_TestsList extends Component {
 
@@ -41,7 +40,7 @@ const styles = {
         marginBottom: 10,
         borderBottomColor: Colors.gray,
         borderBottomWidth: 1,
-        backgroundColor: 'green',
+        backgroundColor: Colors.green,
     },
     itemNormal: {
         marginBottom: 10,
@@ -62,6 +61,7 @@ const styles = {
         color: Colors.black,
     },
     name: {
+        marginLeft: 10,
         fontSize: 18,
         color: Colors.black,
     },

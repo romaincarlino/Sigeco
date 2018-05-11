@@ -187,6 +187,8 @@ class Login extends Component {
                     tests: this.state.tests,
                     contenu_tests: this.state.contenu_tests,
                     points_cle: this.state.points_cle,
+                    login: this.state.login,
+                    password: this.state.password,
                 }
             );
         }

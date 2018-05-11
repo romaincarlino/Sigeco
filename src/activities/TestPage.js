@@ -1,14 +1,11 @@
 import React, {Component} from 'react';
 import {
-    Alert,
+    ToastAndroid,
     ScrollView,
-    ActivityIndicator,
-    TouchableHighlight,
     FlatList,
     TextInput,
     Text,
     View,
-    Button
 } from 'react-native';
 import Colors from '../constants/Colors';
 import Images from '../constants/Images';
@@ -18,6 +15,7 @@ import NavBar from '../components/NavBar';
 class TestPage extends Component {
 
     params = this.props.navigation.state.params;
+    positionsInPointsCle = [];
 
     static navigationOptions = {
         header: null,
@@ -31,23 +29,28 @@ class TestPage extends Component {
             contenu_tests: null,
             points_cle: null,
             points_cle_test: null,
+            //positionInPointsCle: null,
 
         }
     }
 
     componentDidMount() {
-        //Separate point_cle associated with the test
-        var points_cle_test = [];
+        //Separate points cle from the tests than the other
+        points_cle_test = [];
+        //positionsInPointsCle = [];
 
         for (var i = 0; i < this.params.points_cle.length; i++) {
-            var point_cle = this.params.points_cle[i];
+            point_cle = this.params.points_cle[i];
             if (point_cle.id_test == this.params.item.id_test) {
+                //add to the list of point_cle we will see
                 points_cle_test.push(point_cle);
+                //get the position of the point_cle in the total list
+                point_cle['positionInPointsCle'] = i;
+                this.positionsInPointsCle.push(i);
             }
         }
 
         //get commentaire
-        //commentaire1 = this.params.commentaire !== undefined ? this.params.commentaire : '';
 
         if (this.params.tests[this.params.positionInTests].commentaire == undefined) {
             this.params.tests[this.params.positionInTests]['commentaire'] = '';
@@ -62,12 +65,19 @@ class TestPage extends Component {
         })
     }
 
-    renderItem(item) {
+    renderItem(item, index) {
         return (
             <ListItem_TestPage
                 item={item}
+                changeValueItem={this.changeValueItem}
+                context={this}
             />
         );
+    }
+
+    changeValueItem(value, positionInPointsCle, context) {
+        //on change la case "value" du tableau 3 (case rajoutée)
+        context.state.points_cle[positionInPointsCle]['value'] = value;
     }
 
     backToTestsList(context) {
@@ -82,13 +92,27 @@ class TestPage extends Component {
         });
     }
 
-
     validateTest(context) {
-        //changer le "fait"
-        context.state.tests[context.params.positionInTests].fait = '1';
+        validate = true;
 
-        //changer de page et envoyer donnees modifiees
-        context.backToTestsList(context);
+        for (var i = 0; i < context.positionsInPointsCle.length; i++) {
+            pos = context.positionsInPointsCle[i];
+            if (context.state.points_cle[pos].value == undefined ) {
+                validate = false;
+            }
+        }
+
+        if (validate) {
+            //changer le "fait"
+            context.state.tests[context.params.positionInTests].fait = '1';
+
+            //changer de page et envoyer donnees modifiees
+            context.backToTestsList(context);
+            ToastAndroid.show('Test validé', ToastAndroid.LONG);
+        } else {
+            ToastAndroid.show('Certains points clés ne sont pas remplis.\n Validation impossible', ToastAndroid.LONG);
+
+        }
     }
 
     render() {
@@ -108,7 +132,7 @@ class TestPage extends Component {
                     </View>
                     <FlatList
                         data={this.state.points_cle_test}
-                        renderItem={({item}) => this.renderItem(item)}
+                        renderItem={({item, index}) => this.renderItem(item, index)}
                         keyExtractor={item => item.id_point_cle}
                     />
                     <Text style={styles.comment}>Commentaires</Text>
