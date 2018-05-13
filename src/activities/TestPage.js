@@ -32,14 +32,12 @@ class TestPage extends Component {
             points_cle_test: null,
             login: null,
             password: null,
-
         }
     }
 
     componentDidMount() {
         //Separate points cle from the tests than the other
         points_cle_test = [];
-        //positionsInPointsCle = [];
 
         for (var i = 0; i < this.params.points_cle.length; i++) {
             point_cle = this.params.points_cle[i];

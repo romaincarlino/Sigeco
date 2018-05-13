@@ -211,16 +211,17 @@ class TestsList extends Component {
                                         ToastAndroid.show('Données synchronisées', ToastAndroid.LONG);
 
                                         //on supprime les test validés
-                                        for (var i = 0; i < context.state.tests.length; i++) {
-                                            test = context.state.tests[i];
+                                        tests = context.state.tests;
+                                        for (var i = 0; i < tests.length; i++) {
+                                            test = tests[i];
                                             if (test.fait == '1') {
-                                                tests = context.state.tests;
                                                 tests.splice(i, 1);
-                                                context.setState({
-                                                    tests: tests
-                                                })
+                                                i =i-1;
                                             }
                                         }
+                                        context.setState({
+                                            tests: tests
+                                        })
                                     }
                                     else {
                                         ToastAndroid.show('Echec de la synchronisation', ToastAndroid.LONG);
