@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
-import {BackHandler, Alert, FlatList, View, TouchableOpacity, ToastAndroid} from 'react-native';
+import {BackHandler, Alert, FlatList, View, TouchableOpacity} from 'react-native';
+import Toast, {DURATION} from 'react-native-easy-toast'
 import ListItem_TestsList from '../components/ListItem_TestsList';
 import Images from '../constants/Images';
 import NavBar from '../components/NavBar';
+
 
 class TestsList extends Component {
 
@@ -69,25 +71,37 @@ class TestsList extends Component {
                 'Ce test a été validé',
                 'Voulez-vous invalider et modifier ce test?',
                 [
+                    {text: 'Annuler'},
                     {
                         text: 'Effacer', onPress: () => {
-                            //changer le "fait" et le commentaire
-                            tests = this.state.tests;
-                            tests[positionInTests].fait = '0';
-                            tests[positionInTests].commentaire = '';
-                            this.setState({
-                                tests: tests
-                            });
+                            //validation
 
-                            //on remet les points cle a zero
-                            for (i = 0; i < this.state.points_cle.length; i++) {
-                                point_cle = this.state.points_cle[i];
-                                if (point_cle.id_test == item.id_test) {
-                                    point_cle.value = null;
-                                }
-                            }
+                            Alert.alert(
+                                'Effacer',
+                                'Etes vous certain de vouloir effacer le contenu de ce test?',
+                                [
+                                    {text: 'Non'},
+                                    {
+                                        text: 'Oui', onPress: () => {
+                                            //changer le "fait" et le commentaire
+                                            tests = this.state.tests;
+                                            tests[positionInTests].fait = '0';
+                                            tests[positionInTests].commentaire = '';
+                                            this.setState({
+                                                tests: tests
+                                            });
 
-
+                                            //on remet les points cle a zero
+                                            for (i = 0; i < this.state.points_cle.length; i++) {
+                                                point_cle = this.state.points_cle[i];
+                                                if (point_cle.id_test == item.id_test) {
+                                                    point_cle.value = null;
+                                                }
+                                            }
+                                        }
+                                    },
+                                ],
+                            );
                         }
                     },
                     {
@@ -101,9 +115,7 @@ class TestsList extends Component {
 
                             this.goToTestPage(item, positionInTests);
                         }
-                    },
-
-                    {text: 'Annuler'},
+                    }
                 ],
             );
         } else {
@@ -181,7 +193,7 @@ class TestsList extends Component {
             .then((responseText) => {
                 //if {message : error} ou fail
                 if (responseText.charAt(0) == '{') {
-                    ToastAndroid.show('Echec de la synchronisation', ToastAndroid.LONG);
+                    context.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
                 }
                 else {
                     message = JSON.parse(responseText.substring(1)).message;
@@ -203,12 +215,12 @@ class TestsList extends Component {
                             .then((responseText) => {
                                 //if {message : error} ou fail
                                 if (responseText.charAt(0) == '{') {
-                                    ToastAndroid.show('Echec de la synchronisation', ToastAndroid.LONG);
+                                    context.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
                                 }
                                 else {
                                     message = JSON.parse(responseText.substring(1)).message;
                                     if (message == 'ok') {
-                                        ToastAndroid.show('Données synchronisées', ToastAndroid.LONG);
+                                        context.refs.toast.show('Données synchronisées', DURATION.LENGTH_LONG);
 
                                         //on supprime les test validés
                                         tests = context.state.tests;
@@ -216,7 +228,7 @@ class TestsList extends Component {
                                             test = tests[i];
                                             if (test.fait == '1') {
                                                 tests.splice(i, 1);
-                                                i =i-1;
+                                                i = i - 1;
                                             }
                                         }
                                         context.setState({
@@ -224,7 +236,7 @@ class TestsList extends Component {
                                         })
                                     }
                                     else {
-                                        ToastAndroid.show('Echec de la synchronisation', ToastAndroid.LONG);
+                                        this.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
                                     }
                                 }
                             })
@@ -233,7 +245,7 @@ class TestsList extends Component {
                             })
                     }
                     else {
-                        ToastAndroid.show('Echec de la synchronisation', ToastAndroid.LONG);
+                        context.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
                     }
                 }
             })
@@ -269,6 +281,7 @@ class TestsList extends Component {
                     renderItem={({item, index}) => this.renderItem(item, index)}
                     keyExtractor={item => item.id}
                 />
+                <Toast ref="toast"/>
             </View>
         );
     }

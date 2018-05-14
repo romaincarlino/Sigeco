@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {
-    ToastAndroid,
     ActivityIndicator,
     ScrollView,
     Text,
@@ -9,6 +8,7 @@ import {
     TouchableOpacity,
     Image
 } from 'react-native';
+import Toast, {DURATION} from 'react-native-easy-toast'
 import Colors from '../constants/Colors';
 import Images from '../constants/Images';
 
@@ -45,7 +45,8 @@ class Login extends Component {
                 //if {message : error} ou fail
                 if (responseText.charAt(0) == '{') {
                     //message = error
-                    ToastAndroid.show('Identifiant ou mot de passe incorrect', ToastAndroid.SHORT);
+                    this.refs.toast.show('Identifiant ou mot de passe incorrect', DURATION.LENGTH_LONG);
+                    //ToastAndroid.show('Identifiant ou mot de passe incorrect', ToastAndroid.SHORT);
                     this.setState({
                         password: '',
                     })
@@ -53,7 +54,8 @@ class Login extends Component {
                 else {
                     message = JSON.parse(responseText.substring(1)).message;
                     if (message == 'fail') {
-                        ToastAndroid.show('Pas de tests à charger', ToastAndroid.SHORT);
+                        this.refs.toast.show('Pas de tests à charger', DURATION.LENGTH_LONG);
+                        //ToastAndroid.show('Pas de tests à charger', ToastAndroid.SHORT);
                     } else {
                         this.loadDatas();
                         this.goToTests();
@@ -197,39 +199,42 @@ class Login extends Component {
     render() {
 
         return (
-            <ScrollView style={styles.container} keyboardShouldPersistTaps='handled'>
-                <Image
-                    source={Images.logo}
-                    style={styles.logo}
-                />
-                <TextInput
-                    style={styles.input}
-                    underlineColorAndroid='transparent'
-                    placeholder="Login"
-                    placeholderTextColor={Colors.gray}
-                    onChangeText={(login) => this.setState({login})}>
-                    {this.state.login}
-                </TextInput>
-                <TextInput
-                    style={styles.input}
-                    underlineColorAndroid='transparent'
-                    placeholder="Mot de passe"
-                    placeholderTextColor={Colors.gray}
-                    secureTextEntry
-                    onChangeText={(password) => this.setState({password})}>
-                    {this.state.password}
-                </TextInput>
-                <TouchableOpacity style={styles.loginButtonContainer} onPress={this.tryLogin.bind(this)}>
-                    <Text style={styles.loginButtonText}>Se connecter</Text>
-                </TouchableOpacity>
-                {this.state.isLoading < 3 ?
-                    <View style={styles.isLoadingContainer}>
-                        <Text style={styles.isLoadingText}> Chargement en cours</Text>
-                        <ActivityIndicator color={'white'}/>
-                    </View>
-                    : null
-                }
-            </ScrollView>
+            <View style={styles.container} >
+                <ScrollView keyboardShouldPersistTaps='handled'>
+                    <Image
+                        source={Images.logo}
+                        style={styles.logo}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        underlineColorAndroid='transparent'
+                        placeholder="Login"
+                        placeholderTextColor={Colors.gray}
+                        onChangeText={(login) => this.setState({login})}>
+                        {this.state.login}
+                    </TextInput>
+                    <TextInput
+                        style={styles.input}
+                        underlineColorAndroid='transparent'
+                        placeholder="Mot de passe"
+                        placeholderTextColor={Colors.gray}
+                        secureTextEntry
+                        onChangeText={(password) => this.setState({password})}>
+                        {this.state.password}
+                    </TextInput>
+                    <TouchableOpacity style={styles.loginButtonContainer} onPress={this.tryLogin.bind(this)}>
+                        <Text style={styles.loginButtonText}>Se connecter</Text>
+                    </TouchableOpacity>
+                    {this.state.isLoading < 3 ?
+                        <View style={styles.isLoadingContainer}>
+                            <Text style={styles.isLoadingText}> Chargement en cours</Text>
+                            <ActivityIndicator color={'white'}/>
+                        </View>
+                        : null
+                    }
+                </ScrollView>
+                <Toast ref="toast"/>
+            </View>
         );
     }
 }
@@ -271,12 +276,12 @@ const styles = {
         fontSize: 20
     },
     isLoadingContainer: {
-        justifyContent:'center',
-        alignItems:'center',
-        marginTop:20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
     },
     isLoadingText: {
-        color:'white',
+        color: 'white',
         marginBottom: 10,
     },
 }

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {
     BackHandler,
-    ToastAndroid,
     ScrollView,
     FlatList,
     TextInput,
@@ -12,6 +11,7 @@ import Colors from '../constants/Colors';
 import Images from '../constants/Images';
 import ListItem_TestPage from '../components/ListItem_TestPage';
 import NavBar from '../components/NavBar';
+import Toast, {DURATION} from 'react-native-easy-toast'
 
 class TestPage extends Component {
 
@@ -124,9 +124,8 @@ class TestPage extends Component {
 
             //changer de page et envoyer donnees modifiees
             context.backToTestsList(context);
-            ToastAndroid.show('Test validé', ToastAndroid.LONG);
         } else {
-            ToastAndroid.show('Certains points clés ne sont pas remplis.\n Validation impossible', ToastAndroid.LONG);
+            context.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
 
         }
     }
@@ -162,6 +161,7 @@ class TestPage extends Component {
                         {this.state.commentaire}
                     </TextInput>
                 </ScrollView>
+                <Toast ref="toast"/>
             </View>
         );
     }
