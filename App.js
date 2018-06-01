@@ -12,4 +12,4 @@ export default MyProject = StackNavigator(
         TestPage: {screen: TestPage},
     },
     {headerMode: 'screen'},
-    );
+);

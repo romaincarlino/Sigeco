@@ -125,7 +125,7 @@ class TestPage extends Component {
             //changer de page et envoyer donnees modifiees
             context.backToTestsList(context);
         } else {
-            context.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
+            context.refs.toast.show('Tous les points clés ne sont pas remplis', DURATION.LENGTH_LONG);
 
         }
     }

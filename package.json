@@ -7,19 +7,16 @@
     "test": "jest"
   },
   "dependencies": {
-    "babel-preset-react-native": "^2.1.0",
     "react": "16.3.1",
-    "react-native": "0.55.3",
-    "react-native-alert-view": "0.1.0-alpha.15",
+    "react-native": "0.55.4",
     "react-native-easy-toast": "^1.1.0",
-    "react-native-html-parser": "0.0.5",
     "react-native-radio-form": "^1.1.0",
-    "react-native-simple-radio-button": "^2.7.1",
-    "react-navigation": "^1.5.11"
+    "react-navigation": "^2.0.4"
   },
   "devDependencies": {
-    "babel-jest": "22.4.3",
-    "jest": "22.4.3",
+    "babel-jest": "23.0.1",
+    "babel-preset-react-native": "4.0.0",
+    "jest": "23.1.0",
     "react-test-renderer": "16.3.1"
   },
   "jest": {

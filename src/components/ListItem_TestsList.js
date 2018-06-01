@@ -11,7 +11,7 @@ class ListItem_TestsList extends Component {
         demande = this.props.contenu_test.demande.replace(/<br>/g, "\n");
 
         return (
-            <View style={this.props.item.fait == '1' ? styles.itemGreen : styles.itemNormal}>
+            <View style={this.props.item.fait === '1' ? styles.itemGreen : styles.itemNormal}>
                 <View style={styles.titleView}>
                     <Text style={styles.userName}>{this.props.item.Nom_prenom}</Text>
                     <Text style={styles.name}>{this.props.item.Titre_du_test}</Text>

@@ -1,4 +1,4 @@
-import {TouchableOpacity, Text, View, Image, StatusBar} from 'react-native';
+import {TouchableOpacity, Text, View, Image, StatusBar, Platform} from 'react-native';
 import React, {Component} from 'react';
 import Images from '../constants/Images';
 import Colors from "../constants/Colors";
@@ -7,7 +7,7 @@ class NavBar extends Component {
 
     render() {
         return (
-            <View style={styles.background}>
+            <View style={Platform.OS === 'android' ? styles.backgroundAndroid : styles.backgroundIOS}>
                 <TouchableOpacity style={styles.backarrowTouchable}
                     onPress={() => this.props.backFunction(this.props.context)}>
                     <Image style={styles.backarrow} source={Images.back}/>
@@ -23,7 +23,14 @@ class NavBar extends Component {
 }
 
 const styles = {
-    background: {
+    backgroundIOS: {
+        marginTop: 20,
+        flexDirection: 'row',
+        backgroundColor: Colors.blue,
+        alignItems:'center',
+        height: 50,
+    },
+    backgroundAndroid: {
         flexDirection: 'row',
         backgroundColor: Colors.blue,
         alignItems:'center',

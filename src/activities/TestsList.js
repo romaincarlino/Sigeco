@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {BackHandler, Alert, FlatList, View, TouchableOpacity} from 'react-native';
+import {BackHandler, Alert, FlatList, View, TouchableOpacity, Platform} from 'react-native';
 import Toast, {DURATION} from 'react-native-easy-toast'
 import ListItem_TestsList from '../components/ListItem_TestsList';
 import Images from '../constants/Images';
@@ -41,11 +41,24 @@ class TestsList extends Component {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
     }
 
+    //refresh the flatlist after a validation
+    componentDidUpdate(prevProps) {
+
+        if (this.props.navigation !== prevProps.navigation) {
+            this.setState({
+                tests: this.params.tests,
+                contenu_tests: this.params.contenu_tests,
+                points_cle: this.params.points_cle,
+                login: this.params.login,
+                password: this.params.password,
+            })
+        }
+    }
+
     //block hardware black button
     handleBackButton() {
         return true; //instead of default function for hardware back button
     }
-
 
     renderItem(item, index) {
         for (var i = 0; i < this.state.contenu_tests.length; i++) {
@@ -191,62 +204,113 @@ class TestsList extends Component {
         })
             .then((response) => response.text())
             .then((responseText) => {
-                //if {message : error} ou fail
-                if (responseText.charAt(0) == '{') {
-                    context.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
-                }
-                else {
-                    message = JSON.parse(responseText.substring(1)).message;
-                    if (message == 'ok') {
-                        //tab 4
-                        fetch('https://app.sigeco.fr?', {
-                            method: 'POST',
-                            headers: new Headers({
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            }),
-                            body:
-                            "forms[id_client_identification]=" + context.state.login + "&" +
-                            "forms[pass_identification]=" + context.state.password + "&" +
-                            "robot=1972&" +
-                            "tab_mobile=4&" +
-                            "retour=" + retour4,
-                        })
-                            .then((response) => response.text())
-                            .then((responseText) => {
-                                //if {message : error} ou fail
-                                if (responseText.charAt(0) == '{') {
-                                    context.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
-                                }
-                                else {
-                                    message = JSON.parse(responseText.substring(1)).message;
-                                    if (message == 'ok') {
-                                        context.refs.toast.show('Données synchronisées', DURATION.LENGTH_LONG);
-
-                                        //on supprime les test validés
-                                        tests = context.state.tests;
-                                        for (var i = 0; i < tests.length; i++) {
-                                            test = tests[i];
-                                            if (test.fait == '1') {
-                                                tests.splice(i, 1);
-                                                i = i - 1;
-                                            }
-                                        }
-                                        context.setState({
-                                            tests: tests
-                                        })
-                                    }
-                                    else {
-                                        this.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
-                                    }
-                                }
-                            })
-                            .catch((error) => {
-                                console.error(error);
-                            })
-                    }
-                    else {
+                //If  android, there is an invisible character in the beginning
+                if (Platform.OS === 'android') {
+                    //if {message : error} ou fail
+                    if (responseText.charAt(0) == '{') {
                         context.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
                     }
+                    else {
+                        message = JSON.parse(responseText.substring(1)).message;
+                        if (message == 'ok') {
+                            //tab 4
+                            fetch('https://app.sigeco.fr?', {
+                                method: 'POST',
+                                headers: new Headers({
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                }),
+                                body:
+                                "forms[id_client_identification]=" + context.state.login + "&" +
+                                "forms[pass_identification]=" + context.state.password + "&" +
+                                "robot=1972&" +
+                                "tab_mobile=4&" +
+                                "retour=" + retour4,
+                            })
+                                .then((response) => response.text())
+                                .then((responseText) => {
+                                    //if {message : error} ou fail
+                                    if (responseText.charAt(0) == '{') {
+                                        context.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
+                                    }
+                                    else {
+                                        message = JSON.parse(responseText.substring(1)).message;
+                                        if (message == 'ok') {
+                                            context.refs.toast.show('Données synchronisées', DURATION.LENGTH_LONG);
+
+                                            //on supprime les test validés
+                                            tests = context.state.tests;
+                                            for (var i = 0; i < tests.length; i++) {
+                                                test = tests[i];
+                                                if (test.fait == '1') {
+                                                    tests.splice(i, 1);
+                                                    i = i - 1;
+                                                }
+                                            }
+                                            context.setState({
+                                                tests: tests
+                                            })
+                                        }
+                                        else {
+                                            this.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
+                                        }
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.error(error);
+                                })
+                        }
+                        else {
+                            context.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
+                        }
+                    }
+                }
+                //if iOS no invisible charater
+                else {
+                    message = JSON.parse(responseText).message;
+                    if (message == 'error') {
+                        context.refs.toast.show('Echec de la synchronisation1', DURATION.LENGTH_LONG);
+                    }
+                    else {
+                            //tab 4
+                            fetch('https://app.sigeco.fr?', {
+                                method: 'POST',
+                                headers: new Headers({
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                }),
+                                body:
+                                "forms[id_client_identification]=" + context.state.login + "&" +
+                                "forms[pass_identification]=" + context.state.password + "&" +
+                                "robot=1972&" +
+                                "tab_mobile=4&" +
+                                "retour=" + retour4,
+                            })
+                                .then((response) => response.text())
+                                .then((responseText) => {
+                                    message = JSON.parse(responseText).message;
+                                    if (message == 'error') {
+                                        context.refs.toast.show('Echec de la synchronisation2', DURATION.LENGTH_LONG);
+                                    }
+                                    else {
+                                            context.refs.toast.show('Données synchronisées', DURATION.LENGTH_LONG);
+
+                                            //on supprime les test validés
+                                            tests = context.state.tests;
+                                            for (var i = 0; i < tests.length; i++) {
+                                                test = tests[i];
+                                                if (test.fait == '1') {
+                                                    tests.splice(i, 1);
+                                                    i = i - 1;
+                                                }
+                                            }
+                                            context.setState({
+                                                tests: tests
+                                            })
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.error(error);
+                                })
+                        }
                 }
             })
             .catch((error) => {
@@ -276,7 +340,7 @@ class TestsList extends Component {
                     backFunction={this.back}
                 />
                 <FlatList
-                    extraData={this.state}
+                    extraData={this.state} //refresh the flatlist after a validation
                     data={this.state.tests}
                     renderItem={({item, index}) => this.renderItem(item, index)}
                     keyExtractor={item => item.id}
