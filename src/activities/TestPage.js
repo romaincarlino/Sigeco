@@ -142,7 +142,7 @@ class TestPage extends Component {
                 <ScrollView>
                     <View style={styles.titleView}>
                         <Text style={styles.point}>Point</Text>
-                        <Text style={styles.expectedResult}>Resultat attendu</Text>
+                        <Text style={styles.expectedResult}>Résultat attendu</Text>
                         <Text style={styles.validate}>Atteint</Text>
                     </View>
                     <FlatList
@@ -177,7 +177,7 @@ const styles = {
         borderBottomWidth: 1,
     },
     point: {
-        flex: 2,
+        flex: 3,
         color: Colors.black,
         fontWeight: 'bold'
     },

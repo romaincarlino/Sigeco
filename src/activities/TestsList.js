@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {BackHandler, Alert, FlatList, View, TouchableOpacity, Platform} from 'react-native';
+import {Dimensions, BackHandler, Alert, FlatList, View, TouchableOpacity, Platform} from 'react-native';
 import Toast, {DURATION} from 'react-native-easy-toast'
 import ListItem_TestsList from '../components/ListItem_TestsList';
 import Images from '../constants/Images';
@@ -339,19 +339,27 @@ class TestsList extends Component {
                     image={Images.cloud}
                     backFunction={this.back}
                 />
-                <FlatList
-                    extraData={this.state} //refresh the flatlist after a validation
-                    data={this.state.tests}
-                    renderItem={({item, index}) => this.renderItem(item, index)}
-                    keyExtractor={item => item.id}
-                />
+                <View style={styles.list}>
+                    <FlatList
+                        extraData={this.state} //refresh the flatlist after a validation
+                        data={this.state.tests}
+                        renderItem={({item, index}) => this.renderItem(item, index)}
+                        keyExtractor={item => item.id}
+                    />
+                </View>
                 <Toast ref="toast"/>
             </View>
         );
     }
 }
 
-const styles = {};
+let { height } = Dimensions.get("window");
+
+const styles = {
+    list: {
+        height: height - 70
+    }
+};
 
 export default TestsList;
 

@@ -30,7 +30,6 @@ class Login extends Component {
     }
 
     tryLogin() {
-        console.log('iii');
         fetch('https://app.sigeco.fr', {
             method: 'POST',
             headers: new Headers({
@@ -88,13 +87,15 @@ class Login extends Component {
     }
 
     loadDatas() {
+
+        //100ms between each fetch to not receive error
+        setTimeout(function() {this.getTests()}.bind(this),100);
+        setTimeout(function() {this.getContenuTests()}.bind(this),100);
+        setTimeout(function() {this.getPointCles()}.bind(this),100);
+
         this.setState({
             isLoading: 0
         });
-
-        this.getTests();
-        this.getContenuTests();
-        this.getPointCles();
     }
 
     //get tests (tab_mobile = 1)
@@ -112,10 +113,8 @@ class Login extends Component {
         })
             .then((response) => response.text())
             .then((responseText) => {
-                console.log(responseText);
                 //If  android, there is an invisible character in the beginning
                 if (Platform.OS === 'android') {
-                    console.log(responseText);
                     if (responseText.charAt(0) == '{') {
                         //{message : error}
                         this.getTests();
@@ -225,7 +224,7 @@ class Login extends Component {
                         json = JSON.parse(responseText);
                         this.setState({
                             isLoading: this.state.isLoading + 1,
-                            contenu_tests: json.contenu_tests,
+                            points_cle: json.points_cle,
                         })
                     }
                 }

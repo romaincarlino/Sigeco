@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View} from 'react-native';
+import {Platform, Text, View} from 'react-native';
 import Colors from '../constants/Colors';
 
 class ListItem_TestsList extends Component {
@@ -19,15 +19,15 @@ class ListItem_TestsList extends Component {
                 <View style={styles.contentView}>
                     <View style={styles.column}>
                         <Text style={styles.title}>Contexte</Text>
-                        <Text style={styles.content}>{contexte}</Text>
+                        <Text style={Platform.OS === 'android' ? styles.contentAndroid : styles.contentIOS}>{contexte}</Text>
                     </View>
                     <View style={styles.column}>
                         <Text style={styles.title}>Fournitures</Text>
-                        <Text style={styles.content}>{fourniture}</Text>
+                        <Text style={Platform.OS === 'android' ? styles.contentAndroid : styles.contentIOS}>{fourniture}</Text>
                     </View>
                     <View style={styles.column}>
                         <Text style={styles.title}>Demande</Text>
-                        <Text style={styles.content}>{demande}</Text>
+                        <Text style={Platform.OS === 'android' ? styles.contentAndroid : styles.contentIOS}>{demande}</Text>
                     </View>
                 </View>
             </View>
@@ -37,15 +37,15 @@ class ListItem_TestsList extends Component {
 
 const styles = {
     itemGreen: {
-        marginBottom: 10,
+        paddingBottom: 10,
         borderBottomColor: Colors.gray,
-        borderBottomWidth: 1,
+        borderBottomWidth: 2,
         backgroundColor: Colors.green,
     },
     itemNormal: {
-        marginBottom: 10,
+        paddingBottom: 10,
         borderBottomColor: Colors.gray,
-        borderBottomWidth: 1,
+        borderBottomWidth: 2,
     },
     titleView: {
         borderBottomColor: Colors.black,
@@ -80,12 +80,18 @@ const styles = {
     title: {
         fontWeight: 'bold',
         color: Colors.black,
-        borderBottomColor: Colors.gray,
-        borderBottomWidth: 1,
+        //borderBottomColor: Colors.gray,
+        //borderBottomWidth: 1,
         padding: 5,
         margin: 3,
     },
-    content: {
+    contentIOS: {
+        fontSize: 12,
+        color: Colors.black,
+        padding: 5,
+        paddingBottom: 20,
+    },
+    contentAndroid: {
         color: Colors.black,
         padding: 5,
         paddingBottom: 20,

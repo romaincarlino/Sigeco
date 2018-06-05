@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View} from 'react-native';
+import {Platform, Text, View} from 'react-native';
 import Colors from '../constants/Colors';
 import RadioForm from 'react-native-radio-form';
 
@@ -45,8 +45,8 @@ class ListItem_TestPage extends Component {
 
         return (
             <View style={styles.item}>
-                <Text style={styles.point}>{this.props.item.point_cle}</Text>
-                <Text style={styles.expectedResult}>{resultat_attendu}</Text>
+                <Text style={Platform.OS === 'android' ? styles.pointAndroid : styles.pointIOS}>{this.props.item.point_cle}</Text>
+                <Text style={Platform.OS === 'android' ? styles.expectedResultAndroid : styles.expectedResultIOS}>{resultat_attendu}</Text>
                 <View style={styles.validate}>
                     <RadioForm
                         dataSource={this.state.data_source}
@@ -78,11 +78,22 @@ const styles = {
         marginLeft: 10,
         marginRight: 10,
     },
-    point: {
-        flex: 2,
+    pointIOS: {
+        fontSize: 12,
+        flex: 3,
         color: Colors.black,
     },
-    expectedResult: {
+    pointAndroid: {
+        flex: 3,
+        color: Colors.black,
+    },
+    expectedResultIOS: {
+        fontSize: 12,
+        flex: 6,
+        marginLeft: 10,
+        color: Colors.black,
+    },
+    expectedResultAndroid: {
         flex: 6,
         marginLeft: 10,
         color: Colors.black,
