@@ -87,15 +87,13 @@ class Login extends Component {
     }
 
     loadDatas() {
-
-        //100ms between each fetch to not receive error
-        setTimeout(function() {this.getTests()}.bind(this),100);
-        setTimeout(function() {this.getContenuTests()}.bind(this),100);
-        setTimeout(function() {this.getPointCles()}.bind(this),100);
-
         this.setState({
             isLoading: 0
         });
+
+        //getTests -> getContenuTest -> getPointCles
+        this.getTests();
+
     }
 
     //get tests (tab_mobile = 1)
@@ -123,9 +121,10 @@ class Login extends Component {
                         responseText = responseText.substring(1);
                         json = JSON.parse(responseText);
                         this.setState({
-                            isLoading: this.state.isLoading + 1,
+                            //isLoading: this.state.isLoading + 1,
                             tests: json.tests
                         })
+                        this.getContenuTests();
                     }
                 }
                 //if iOS no invisible character
@@ -136,9 +135,10 @@ class Login extends Component {
                     } else {
                         json = JSON.parse(responseText);
                         this.setState({
-                            isLoading: this.state.isLoading + 1,
+                            //isLoading: this.state.isLoading + 1,
                             tests: json.tests
                         })
+                        this.getContenuTests();
                     }
                 }
 
@@ -173,9 +173,10 @@ class Login extends Component {
                         responseText = responseText.substring(1);
                         json = JSON.parse(responseText);
                         this.setState({
-                            isLoading: this.state.isLoading + 1,
+                            //isLoading: this.state.isLoading + 1,
                             contenu_tests: json.contenu_tests,
                         })
+                        this.getPointCles();
                     }
                 }
                 //if iOS no invisible character
@@ -186,9 +187,10 @@ class Login extends Component {
                     } else {
                         json = JSON.parse(responseText);
                         this.setState({
-                            isLoading: this.state.isLoading + 1,
+                            //isLoading: this.state.isLoading + 1,
                             contenu_tests: json.contenu_tests,
                         })
+                        this.getPointCles();
                     }
                 }
             })
@@ -223,7 +225,7 @@ class Login extends Component {
                         responseText = responseText.substring(1);
                         json = JSON.parse(responseText);
                         this.setState({
-                            isLoading: this.state.isLoading + 1,
+                            isLoading: 3,//this.state.isLoading + 1,
                             points_cle: json.points_cle,
                         })
                     }
@@ -237,7 +239,7 @@ class Login extends Component {
                         json = JSON.parse(responseText);
 
                         this.setState({
-                            isLoading: this.state.isLoading + 1,
+                            isLoading: 3,//this.state.isLoading + 1,
                             points_cle: json.points_cle
                         })
                     }
