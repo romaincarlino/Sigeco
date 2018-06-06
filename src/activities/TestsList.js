@@ -204,9 +204,9 @@ class TestsList extends Component {
         })
             .then((response) => response.text())
             .then((responseText) => {
-                //If  android, there is an invisible character in the beginning
+                //If  android, there is an invisible character in the beginning, not if message=error
                 if (Platform.OS === 'android') {
-                    //if {message : error} ou fail
+                    //if {message : error}
                     if (responseText.charAt(0) == '{') {
                         context.refs.toast.show('Echec de la synchronisation', DURATION.LENGTH_LONG);
                     }
